@@ -1,46 +1,47 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Checkout - Loja Online</title>
-<style>
-  body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; }
-  h1 { text-align: center; }
-  .order-summary, form {
-    background: white;
-    padding: 1rem 2rem;
-    margin: 1rem auto;
-    max-width: 500px;
-    border-radius: 8px;
-    box-shadow: 0 0 8px rgba(0,0,0,0.1);
-  }
-  .order-summary ul {
-    list-style: none; padding: 0;
-  }
-  .order-summary li {
-    display: flex; justify-content: space-between; padding: 0.3rem 0;
-  }
-  form label {
-    display: block;
-    margin: 0.7rem 0 0.3rem 0;
-  }
-  form input, form textarea {
-    width: 100%;
-    padding: 0.5rem;
-    box-sizing: border-box;
-  }
-  button {
-    margin-top: 1rem;
-    padding: 0.7rem 1rem;
-    background: #28a745;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    font-weight: bold;
-  }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Checkout - Loja Online</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; }
+    h1 { text-align: center; }
+    .order-summary, form, .mbway-info {
+      background: white;
+      padding: 1rem 2rem;
+      margin: 1rem auto;
+      max-width: 500px;
+      border-radius: 8px;
+      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    }
+    .order-summary ul { list-style: none; padding: 0; }
+    .order-summary li {
+      display: flex; justify-content: space-between; padding: 0.3rem 0;
+    }
+    form label {
+      display: block;
+      margin: 0.7rem 0 0.3rem 0;
+    }
+    form input, form textarea {
+      width: 100%;
+      padding: 0.5rem;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1rem;
+      background: #28a745;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .mbway-info strong {
+      font-size: 1.1rem;
+    }
+  </style>
 </head>
 <body>
 
@@ -50,6 +51,18 @@
   <h2>Resumo da Encomenda</h2>
   <ul id="order-list"></ul>
   <p><strong>Total: €<span id="order-total">0.00</span></strong></p>
+</div>
+
+<div class="mbway-info">
+  <h2>Pagamento via MBWay</h2>
+  <p>Envia o valor total para o número:</p>
+  <p><strong style="color: darkblue;">912 137 390</strong></p>
+  <p>Depois envia o comprovativo para:</p>
+  <ul>
+    <li>Email: <strong>guilhermemartinsalmeida14@gmail.com</strong></li>
+    <li>WhatsApp: <strong>912 137 390</strong></li>
+  </ul>
+  <p>Assim que confirmarmos o pagamento, trataremos da entrega.</p>
 </div>
 
 <form id="checkout-form">
@@ -63,11 +76,10 @@
   <label for="morada">Morada:</label>
   <textarea id="morada" name="morada" rows="3" required></textarea>
 
-  <button type="submit">Finalizar Compra</button>
+  <button type="submit">Confirmar Encomenda</button>
 </form>
 
 <script>
-  // Carrega carrinho do localStorage
   const cart = JSON.parse(localStorage.getItem('meuCarrinho')) || [];
   const orderListEl = document.getElementById('order-list');
   const orderTotalEl = document.getElementById('order-total');
@@ -89,7 +101,6 @@
   }
   orderTotalEl.textContent = total.toFixed(2);
 
-  // Formulário
   document.getElementById('checkout-form').addEventListener('submit', e => {
     e.preventDefault();
 
@@ -102,12 +113,9 @@
       return;
     }
 
-    alert(`Obrigado pela sua compra, ${nome}!\nEm breve entraremos em contacto.`);
+    alert(`Obrigado ${nome}! Envia o comprovativo MBWay para o número 912 137 390. Entraremos em contacto após confirmação.`);
 
-    // Limpar carrinho e localStorage
     localStorage.removeItem('meuCarrinho');
-
-    // Redirecionar para a loja
     window.location.href = 'index.html';
   });
 </script>
