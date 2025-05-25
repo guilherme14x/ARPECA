@@ -65,8 +65,9 @@
   <p>Assim que confirmarmos o pagamento, trataremos da entrega.</p>
 </div>
 
-<form id="checkout-form">
+<form id="checkout-form" method="POST" action="https://formspree.io/f/meogbkld">
   <h2>Dados para Entrega</h2>
+  
   <label for="nome">Nome Completo:</label>
   <input type="text" id="nome" name="nome" required />
 
@@ -76,6 +77,9 @@
   <label for="morada">Morada:</label>
   <textarea id="morada" name="morada" rows="3" required></textarea>
 
+  <!-- Campo oculto para os dados do carrinho -->
+  <input type="hidden" name="carrinho" id="carrinho-data" />
+
   <button type="submit">Confirmar Encomenda</button>
 </form>
 
@@ -83,6 +87,7 @@
   const cart = JSON.parse(localStorage.getItem('meuCarrinho')) || [];
   const orderListEl = document.getElementById('order-list');
   const orderTotalEl = document.getElementById('order-total');
+  const carrinhoDataInput = document.getElementById('carrinho-data');
 
   let total = 0;
   if (cart.length === 0) {
@@ -101,22 +106,15 @@
   }
   orderTotalEl.textContent = total.toFixed(2);
 
+  // Preenche o campo oculto com os dados do carrinho (formato texto simples)
+  const carrinhoResumo = cart.map(item => `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}`).join('\n');
+  carrinhoDataInput.value = `Produtos:\n${carrinhoResumo}\nTotal: €${total.toFixed(2)}`;
+
+  // Limpar carrinho após envio
   document.getElementById('checkout-form').addEventListener('submit', e => {
-    e.preventDefault();
-
-    const nome = e.target.nome.value.trim();
-    const email = e.target.email.value.trim();
-    const morada = e.target.morada.value.trim();
-
-    if (!nome || !email || !morada) {
-      alert('Por favor preencha todos os campos.');
-      return;
-    }
-
-    alert(`Obrigado ${nome}! Envia o comprovativo MBWay para o número 912 137 390. Entraremos em contacto após confirmação.`);
-
+    // Podemos deixar o Formspree enviar o formulário
+    alert('Obrigado pela encomenda! Receberás um email de confirmação em breve.');
     localStorage.removeItem('meuCarrinho');
-    window.location.href = 'index.html';
   });
 </script>
 
