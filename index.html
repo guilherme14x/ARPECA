@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Loja Online de Artigos Usados</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 0; padding: 0; background: #f5f5f5;
+  }
+  header {
+    background: #333;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+  }
+  .container {
+    max-width: 1100px;
+    margin: 1rem auto;
+    padding: 0 1rem;
+  }
+  .filters {
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  .filters button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border: none;
+    background: #333;
+    color: white;
+    border-radius: 4px;
+    transition: background 0.3s;
+  }
+  .filters button:hover, .filters button.active {
+    background: #555;
+  }
+  .products {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
+    gap: 1rem;
+  }
+  .product-card {
+    background: white;
+    padding: 1rem;
+    border-radius: 6px;
+    box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  .product-card img {
+    width: 100%;
+    border-radius: 4px;
+    height: 140px;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+  }
+  .product-info {
+    flex-grow: 1;
+  }
+  .product-info h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  .product-info p {
+    margin: 0 0 1rem 0;
+    color: #555;
+  }
+  .price {
+    font-weight: bold;
+    color: #2c7;
+    margin-bottom: 1rem;
+  }
+  button.buy-btn {
+    background: #28a745;
+    color: white;
+    border: none;
+    padding: 0.6rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+  }
+  button.buy-btn:hover {
+    background: #218838;
+  }
+  /* Carrinho */
+  #cart {
+    position: fixed;
+    top: 60px;
+    right: 20px;
+    background: white;
+    border-radius: 8px;
+    width: 320px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 0 10px rgb(0 0 0 / 0.3);
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    z-index: 100;
+  }
+  #cart h2 {
+    margin-top: 0;
+  }
+  #cart-items {
+    flex-grow: 1;
+  }
+  .cart-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.6rem;
+  }
+  .cart-item button {
+    background: #dc3545;
+    border: none;
+    color: white;
+    padding: 0 6px;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  #cart-toggle {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 110;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Loja Online - Artigos Usados</h1>
+</header>
+
+<div class="container">
+
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all">Todos</button>
+    <button class="filter-btn" data-cat="eletronica">Eletrónica</button>
+    <button class="filter-btn" data-cat="roupa">Roupa</button>
+    <button class="filter-btn" data-cat="outros">Outros</button>
+  </div>
+
+  <div class="products" id="product-list">
+    <!-- Produtos vão aparecer aqui -->
+  </div>
+
+</div>
+
+<button id="cart-toggle">Carrinho (0)</button>
+
+<div id="cart">
+  <h2>Carrinho</h2>
+  <div id="cart-items"></div>
+  <div><strong>Total: €<span id="cart-total">0.00</span></strong></div>
+</div>
+
+<script>
+  const products = [
+    { id: 1, nome: "Telemóvel Usado", preco: 80, categoria: "eletronica", imagem: "https://picsum.photos/id/180/300/200" },
+    { id: 2, nome: "Camisola Vermelha", preco: 15, categoria: "roupa", imagem: "https://picsum.photos/id/21/300/200" },
+    { id: 3, nome: "Teclado Antigo", preco: 25, categoria: "eletronica", imagem: "https://picsum.photos/id/30/300/200" },
+    { id: 4, nome: "Livro de Romance", preco: 5, categoria: "outros", imagem: "https://picsum.photos/id/10/300/200" },
+    { id: 5, nome: "Casaco de Inverno", preco: 40, categoria: "roupa", imagem: "https://picsum.photos/id/40/300/200" },
+    { id: 6, nome: "Rádio Vintage", preco: 60, categoria: "eletronica", imagem: "https://picsum.photos/id/50/300/200" },
+    { id: 7, nome: "Relógio de Pulso", preco: 20, categoria: "outros", imagem: "https://picsum.photos/id/60/300/200" },
+    { id: 8, nome: "Calças Jeans", preco: 18, categoria: "roupa", imagem: "https://picsum.photos/id/70/300/200" }
+  ];
+
+  let filteredCategory = "all";
+  let cart = [];
+
+  const productListEl = document.getElementById("product-list");
+  const filterButtons = document.querySelectorAll(".filter-btn");
+  const cartToggleBtn = document.getElementById("cart-toggle");
+  const cartEl = document.getElementById("cart");
+  const cartItemsEl = document.getElementById("cart-items");
+  const cartTotalEl = document.getElementById("cart-total");
+
+  // Salvar e carregar carrinho do localStorage
+  function saveCart() {
+    localStorage.setItem('meuCarrinho', JSON.stringify(cart));
+  }
+  function loadCart() {
+    const saved = localStorage.getItem('meuCarrinho');
+    if (saved) {
+      cart = JSON.parse(saved);
+    }
+  }
+
+  function renderProducts() {
+    productListEl.innerHTML = "";
+    let filteredProducts = filteredCategory === "all" ? products : products.filter(p => p.categoria === filteredCategory);
+
+    filteredProducts.forEach(p => {
+      const card = document.createElement("div");
+      card.className = "product-card";
+
+      card.innerHTML = `
+        <img src="${p.imagem}" alt="${p.nome}">
+        <div class="product-info">
+          <h3>${p.nome}</h3>
+          <p class="price">€${p.preco.toFixed(2)}</p>
+        </div>
+        <button class="buy-btn" data-id="${p.id}">Comprar</button>
+      `;
+
+      productListEl.appendChild(card);
+    });
+
+    // Adiciona evento aos botões comprar
+    document.querySelectorAll(".buy-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = parseInt(btn.getAttribute("data-id"));
+        addToCart(id);
+      });
+    });
+  }
+
+  function addToCart(id) {
+    const produto = products.find(p => p.id === id);
+    const item = cart.find(c => c.id === id);
+
+    if (item) {
+      item.quantidade++;
+    } else {
+      cart.push({...produto, quantidade: 1});
+    }
+    updateCart();
+  }
+
+  function updateCart() {
+    cartItemsEl.innerHTML = "";
+    let total = 0;
+    cart.forEach(item => {
+      total += item.preco * item.quantidade;
+      const div = document.createElement("div");
+      div.className = "cart-item";
+      div.innerHTML = `
+        ${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}
+        <button data-id="${item.id}">x</button>
+      `;
+      cartItemsEl.appendChild(div);
+    });
+    cartTotalEl.textContent = total.toFixed(2);
+    cartToggleBtn.textContent = `Carrinho (${cart.length})`;
+
+    // Remove item do carrinho
+    cartItemsEl.querySelectorAll("button").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const id = parseInt(btn.getAttribute("data-id"));
+        cart = cart.filter(item => item.id !== id);
+        updateCart();
+      });
+    });
+
+    saveCart();
+  }
+
+  // Filtros
+  filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filteredCategory = btn.getAttribute("data-cat");
+      renderProducts();
+    });
+  });
+
+  // Mostrar / esconder carrinho
+  cartToggleBtn.addEventListener("click", () => {
+    if(cartEl.style.display === "flex") {
+      cartEl.style.display = "none";
+    } else {
+      cartEl.style.display = "flex";
+    }
+  });
+
+  // Botão finalizar compra
+  const checkoutBtn = document.createElement('button');
+  checkoutBtn.textContent = "Finalizar Compra";
+  checkoutBtn.style.marginTop = "10px";
+  checkoutBtn.style.background = "#007bff";
+  checkoutBtn.style.color = "white";
+  checkoutBtn.style.border = "none";
+  checkoutBtn.style.padding = "0.5rem";
+  checkoutBtn.style.borderRadius = "4px";
+  checkoutBtn.style.cursor = "pointer";
+  cartEl.appendChild(checkoutBtn);
+
+  checkoutBtn.addEventListener('click', () => {
+    if(cart.length === 0) {
+      alert('O carrinho está vazio!');
+    } else {
+      window.location.href = 'checkout.html';
+    }
+  });
+
+  // Iniciar
+  loadCart();
+  renderProducts();
+  updateCart();
+
+</script>
+
+</body>
+</html>

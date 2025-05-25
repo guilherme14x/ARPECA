@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Checkout - Loja Online</title>
+<style>
+  body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; }
+  h1 { text-align: center; }
+  .order-summary, form {
+    background: white;
+    padding: 1rem 2rem;
+    margin: 1rem auto;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+  }
+  .order-summary ul {
+    list-style: none; padding: 0;
+  }
+  .order-summary li {
+    display: flex; justify-content: space-between; padding: 0.3rem 0;
+  }
+  form label {
+    display: block;
+    margin: 0.7rem 0 0.3rem 0;
+  }
+  form input, form textarea {
+    width: 100%;
+    padding: 0.5rem;
+    box-sizing: border-box;
+  }
+  button {
+    margin-top: 1rem;
+    padding: 0.7rem 1rem;
+    background: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    font-weight: bold;
+  }
+</style>
+</head>
+<body>
+
+<h1>Checkout</h1>
+
+<div class="order-summary">
+  <h2>Resumo da Encomenda</h2>
+  <ul id="order-list"></ul>
+  <p><strong>Total: €<span id="order-total">0.00</span></strong></p>
+</div>
+
+<form id="checkout-form">
+  <h2>Dados para Entrega</h2>
+  <label for="nome">Nome Completo:</label>
+  <input type="text" id="nome" name="nome" required />
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" required />
+
+  <label for="morada">Morada:</label>
+  <textarea id="morada" name="morada" rows="3" required></textarea>
+
+  <button type="submit">Finalizar Compra</button>
+</form>
+
+<script>
+  // Carrega carrinho do localStorage
+  const cart = JSON.parse(localStorage.getItem('meuCarrinho')) || [];
+  const orderListEl = document.getElementById('order-list');
+  const orderTotalEl = document.getElementById('order-total');
+
+  let total = 0;
+  if (cart.length === 0) {
+    orderListEl.innerHTML = '<li>Carrinho vazio.</li>';
+  } else {
+    cart.forEach(item => {
+      const li = document.createElement('li');
+      const subtotal = item.preco * item.quantidade;
+      total += subtotal;
+      li.textContent = `${item.nome} x${item.quantidade}`;
+      const span = document.createElement('span');
+      span.textContent = `€${subtotal.toFixed(2)}`;
+      li.appendChild(span);
+      orderListEl.appendChild(li);
+    });
+  }
+  orderTotalEl.textContent = total.toFixed(2);
+
+  // Formulário
+  document.getElementById('checkout-form').addEventListener('submit', e => {
+    e.preventDefault();
+
+    const nome = e.target.nome.value.trim();
+    const email = e.target.email.value.trim();
+    const morada = e.target.morada.value.trim();
+
+    if (!nome || !email || !morada) {
+      alert('Por favor preencha todos os campos.');
+      return;
+    }
+
+    alert(`Obrigado pela sua compra, ${nome}!\nEm breve entraremos em contacto.`);
+
+    // Limpar carrinho e localStorage
+    localStorage.removeItem('meuCarrinho');
+
+    // Redirecionar para a loja
+    window.location.href = 'index.html';
+  });
+</script>
+
+</body>
+</html>
