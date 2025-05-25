@@ -5,127 +5,43 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Arpeca Store</title>
 <style>
-  /* Reset e base */
   body {
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background: #f5f5f5;
+    margin: 0; padding: 0; background: #f5f5f5;
   }
-
-  /* Cabeçalho topo com contacto */
-  .top-header {
-    background: #111;
-    color: white;
-    font-size: 0.85rem;
-    padding: 0.4rem 1rem;
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-  }
-
-  /* Header e menu fixo */
   header {
-    position: fixed;
-    top: 28px; /* abaixo do top-header */
-    left: 0; right: 0;
-    background: #222;
-    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
-    z-index: 120;
-  }
-
-  .navbar {
-    max-width: 1100px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.8rem 1rem;
+    background: #333;
     color: white;
-    font-weight: bold;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 1rem;
+    text-align: center;
   }
-
-  .logo {
-    font-size: 1.6rem;
-    letter-spacing: 3px;
+  header .info {
+    font-size: 0.9rem;
+    margin-top: 5px;
   }
-
-  .nav-links {
-    list-style: none;
-    display: flex;
-    gap: 1rem;
-    margin: 0;
-    padding: 0;
-  }
-
-  .nav-links li {
-    margin: 0;
-  }
-
-  .nav-links button {
-    background: transparent;
-    border: none;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    padding: 0.5rem 0.8rem;
-    border-radius: 4px;
-    transition: background-color 0.3s ease;
-    font-weight: 600;
-  }
-
-  .nav-links button:hover,
-  .nav-links button.active {
-    background-color: #444;
-  }
-
-  .cart-btn {
-    background: #28a745;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-  }
-
-  .cart-btn:hover {
-    background: #218838;
-  }
-
-  /* Container principal */
   .container {
     max-width: 1100px;
-    margin: 110px auto 1rem; /* espaçamento para header e top-header */
+    margin: 1rem auto;
     padding: 0 1rem;
   }
-
-  /* Menu de categorias na página inicial */
-  .category-menu {
-    display: flex;
-    gap: 1.5rem;
-    justify-content: center;
-    flex-wrap: wrap;
+  .filters {
+    margin-bottom: 1rem;
+    text-align: center;
   }
-  .category-btn {
-    background: #444;
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 8px;
-    font-size: 1.3rem;
+  .filters button {
+    margin: 0 0.5rem;
+    padding: 0.5rem 1rem;
     cursor: pointer;
-    user-select: none;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
+    border: none;
+    background: #333;
+    color: white;
+    border-radius: 4px;
+    transition: background 0.3s;
   }
-  .category-btn:hover {
-    background: #28a745;
+  .filters button:hover, .filters button.active {
+    background: #555;
   }
-
-  /* Produtos */
   .products {
-    margin-top: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
     gap: 1rem;
@@ -153,6 +69,10 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
   }
+  .product-info p {
+    margin: 0 0 1rem 0;
+    color: #555;
+  }
   .price {
     font-weight: bold;
     color: #2c7;
@@ -171,11 +91,10 @@
   button.buy-btn:hover {
     background: #218838;
   }
-
   /* Carrinho */
   #cart {
     position: fixed;
-    top: 110px;
+    top: 60px;
     right: 20px;
     background: white;
     border-radius: 8px;
@@ -186,14 +105,13 @@
     padding: 1rem;
     display: none;
     flex-direction: column;
-    z-index: 150;
+    z-index: 100;
   }
   #cart h2 {
     margin-top: 0;
   }
   #cart-items {
     flex-grow: 1;
-    margin-bottom: 0.8rem;
   }
   .cart-item {
     display: flex;
@@ -208,74 +126,54 @@
     border-radius: 4px;
     cursor: pointer;
   }
-
-  /* Botão voltar à seleção de categorias */
-  #back-to-categories {
-    margin-top: 1rem;
+  #cart-toggle {
+    position: fixed;
+    top: 10px;
+    right: 20px;
     background: #007bff;
     color: white;
     border: none;
-    padding: 0.6rem 1rem;
-    border-radius: 5px;
+    padding: 0.8rem 1rem;
+    border-radius: 6px;
     cursor: pointer;
+    z-index: 110;
     font-weight: bold;
   }
-  #back-to-categories:hover {
-    background: #0056b3;
-  }
-
 </style>
 </head>
 <body>
 
-<!-- Cabeçalho topo com contacto -->
-<div class="top-header">
-  <div>Morada: Rua Exemplo 123, Lisboa</div>
-  <div>Tel: +351 912 345 678</div>
-  <div>Email: contacto@arpecastore.pt</div>
-</div>
-
 <header>
-  <nav class="navbar">
-    <div class="logo">Arpeca Store</div>
-    <ul class="nav-links">
-      <li><button class="filter-btn active" data-cat="eletronica">Eletrónica</button></li>
-      <li><button class="filter-btn" data-cat="roupa">Roupa</button></li>
-      <li><button class="filter-btn" data-cat="outros">Outros</button></li>
-    </ul>
-    <button id="cart-toggle" class="cart-btn">Carrinho (0)</button>
-  </nav>
+  <h1>Arpeca Store</h1>
+  <div class="info">
+    Morada: Rua Exemplo, 123, Lisboa | Contactos: 912 137 390 | guilhermemartinsalmeida14@gmail.com
+  </div>
 </header>
 
 <div class="container">
-  <!-- Menu principal de categorias -->
-  <div id="category-menu" class="category-menu">
-    <button class="category-btn" data-cat="eletronica">Eletrónica</button>
-    <button class="category-btn" data-cat="roupa">Roupa</button>
-    <button class="category-btn" data-cat="outros">Outros</button>
+
+  <div class="filters">
+    <button class="filter-btn active" data-cat="all">Todos</button>
+    <button class="filter-btn" data-cat="eletronica">Eletrónica</button>
+    <button class="filter-btn" data-cat="roupa">Roupa</button>
+    <button class="filter-btn" data-cat="outros">Outros</button>
   </div>
 
-  <!-- Produtos (inicialmente escondidos) -->
-  <div id="product-section" style="display:none;">
-    <button id="back-to-categories">← Voltar às Categorias</button>
-    <div class="products" id="product-list"></div>
+  <div class="products" id="product-list">
+    <!-- Produtos aparecerão aqui -->
   </div>
+
 </div>
+
+<button id="cart-toggle">Carrinho (0)</button>
 
 <div id="cart">
   <h2>Carrinho</h2>
   <div id="cart-items"></div>
   <div><strong>Total: €<span id="cart-total">0.00</span></strong></div>
-  <button id="checkout-btn" style="
-    margin-top: 10px; 
-    background: #007bff; 
-    color: white; 
-    border: none; 
-    padding: 0.5rem; 
-    border-radius: 4px; 
-    cursor: pointer;
-    font-weight: bold;
-  ">Finalizar Compra</button>
+  <button id="btn-finalizar" style="margin-top:10px; background:#007bff; color:#fff; border:none; padding:0.6rem; border-radius:4px; cursor:pointer; display:none;">
+    Finalizar Compra
+  </button>
 </div>
 
 <script>
@@ -290,19 +188,16 @@
     { id: 8, nome: "Calças Jeans", preco: 18, categoria: "roupa", imagem: "https://picsum.photos/id/70/300/200" }
   ];
 
-  let currentCategory = null;
+  let filteredCategory = "all";
   let cart = [];
 
-  const categoryMenuEl = document.getElementById("category-menu");
-  const productSectionEl = document.getElementById("product-section");
   const productListEl = document.getElementById("product-list");
-  const backToCategoriesBtn = document.getElementById("back-to-categories");
-
+  const filterButtons = document.querySelectorAll(".filter-btn");
   const cartToggleBtn = document.getElementById("cart-toggle");
   const cartEl = document.getElementById("cart");
   const cartItemsEl = document.getElementById("cart-items");
   const cartTotalEl = document.getElementById("cart-total");
-  const checkoutBtn = document.getElementById("checkout-btn");
+  const btnFinalizar = document.getElementById("btn-finalizar");
 
   // Salvar e carregar carrinho do localStorage
   function saveCart() {
@@ -315,25 +210,9 @@
     }
   }
 
-  // Mostrar produtos da categoria selecionada
-  function showProducts(cat) {
-    currentCategory = cat;
-    categoryMenuEl.style.display = "none";
-    productSectionEl.style.display = "block";
-
-    // Atualiza botões do menu fixo (barra topo)
-    document.querySelectorAll(".filter-btn").forEach(btn => {
-      btn.classList.toggle("active", btn.getAttribute("data-cat") === cat);
-    });
-
-    // Filtra e mostra produtos
-    const filteredProducts = products.filter(p => p.categoria === cat);
+  function renderProducts() {
     productListEl.innerHTML = "";
-
-    if(filteredProducts.length === 0){
-      productListEl.innerHTML = "<p>Não há produtos nesta categoria.</p>";
-      return;
-    }
+    let filteredProducts = filteredCategory === "all" ? products : products.filter(p => p.categoria === filteredCategory);
 
     filteredProducts.forEach(p => {
       const card = document.createElement("div");
@@ -351,7 +230,7 @@
       productListEl.appendChild(card);
     });
 
-    // Adiciona evento aos botões comprar
+    // Evento comprar
     document.querySelectorAll(".buy-btn").forEach(btn => {
       btn.addEventListener("click", () => {
         const id = parseInt(btn.getAttribute("data-id"));
@@ -359,24 +238,6 @@
       });
     });
   }
-
-  // Voltar ao menu categorias
-  backToCategoriesBtn.addEventListener("click", () => {
-    currentCategory = null;
-    productSectionEl.style.display = "none";
-    categoryMenuEl.style.display = "flex";
-
-    // Limpar seleção ativa no menu fixo
-    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
-  });
-
-  // Menu fixo no header (barra topo) também filtra produtos
-  document.querySelectorAll(".filter-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const cat = btn.getAttribute("data-cat");
-      showProducts(cat);
-    });
-  });
 
   function addToCart(id) {
     const produto = products.find(p => p.id === id);
@@ -406,6 +267,12 @@
     cartTotalEl.textContent = total.toFixed(2);
     cartToggleBtn.textContent = `Carrinho (${cart.length})`;
 
+    if (cart.length > 0) {
+      btnFinalizar.style.display = "block";
+    } else {
+      btnFinalizar.style.display = "none";
+    }
+
     // Remove item do carrinho
     cartItemsEl.querySelectorAll("button").forEach(btn => {
       btn.addEventListener("click", () => {
@@ -418,6 +285,16 @@
     saveCart();
   }
 
+  // Filtros
+  filterButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      filterButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      filteredCategory = btn.getAttribute("data-cat");
+      renderProducts();
+    });
+  });
+
   // Mostrar / esconder carrinho
   cartToggleBtn.addEventListener("click", () => {
     if(cartEl.style.display === "flex") {
@@ -427,20 +304,18 @@
     }
   });
 
-  // Botão finalizar compra
-  checkoutBtn.addEventListener('click', () => {
+  // Finalizar compra abre checkout.html em nova aba
+  btnFinalizar.addEventListener("click", () => {
     if(cart.length === 0) {
-      alert('O carrinho está vazio!');
-    } else {
-      alert('Funcionalidade de checkout ainda não está implementada.');
+      alert("O carrinho está vazio!");
+      return;
     }
+    window.open("checkout.html", "_blank");
   });
 
-  // Iniciar
+  // Inicializar
   loadCart();
-  // Mostrar menu principal (categorias) no início
-  categoryMenuEl.style.display = "flex";
-  productSectionEl.style.display = "none";
+  renderProducts();
   updateCart();
 
 </script>

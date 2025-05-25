@@ -3,481 +3,135 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Arpeca Store</title>
+<title>Checkout - Arpeca Store</title>
 <style>
   body {
     font-family: Arial, sans-serif;
-    margin: 0; padding: 0; background: #f5f5f5;
+    background: #f5f5f5;
+    padding: 2rem;
   }
-  header {
-    background: #333;
-    color: white;
+  h1 {
+    text-align: center;
+  }
+  #order-summary, #payment-section {
+    background: white;
     padding: 1rem;
-  }
-  header h1 {
-    margin: 0;
-  }
-  header .info {
-    font-size: 0.9rem;
-    margin-top: 0.4rem;
-  }
-  nav {
-    background: #444;
-    display: flex;
-    justify-content: center;
-  }
-  nav button {
-    background: #444;
-    color: white;
-    border: none;
-    padding: 1rem 2rem;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  nav button:hover, nav button.active {
-    background: #666;
-  }
-  .container {
-    max-width: 1100px;
+    border-radius: 6px;
+    max-width: 600px;
     margin: 1rem auto;
-    padding: 0 1rem;
-    min-height: 400px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
-  .products {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
-    gap: 1rem;
-  }
-  .product-card {
-    background: white;
-    padding: 1rem;
-    border-radius: 6px;
-    box-shadow: 0 0 8px rgb(0 0 0 / 0.1);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-  .product-card img {
-    width: 100%;
-    border-radius: 4px;
-    height: 140px;
-    object-fit: cover;
-    margin-bottom: 0.5rem;
-  }
-  .product-info {
-    flex-grow: 1;
-  }
-  .product-info h3 {
-    margin: 0 0 0.5rem 0;
-    font-size: 1.1rem;
-  }
-  .price {
-    font-weight: bold;
-    color: #2c7;
-    margin-bottom: 1rem;
-  }
-  button.buy-btn {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 0.6rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-  }
-  button.buy-btn:hover {
-    background: #218838;
-  }
-  #cart-toggle {
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 0.8rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 110;
-    font-weight: bold;
-  }
-  /* Carrinho */
-  #cart {
-    position: fixed;
-    top: 60px;
-    right: 20px;
-    background: white;
-    border-radius: 8px;
-    width: 320px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: 0 0 10px rgb(0 0 0 / 0.3);
-    padding: 1rem;
-    display: none;
-    flex-direction: column;
-    z-index: 100;
-  }
-  #cart h2 {
-    margin-top: 0;
-  }
-  #cart-items {
-    flex-grow: 1;
-  }
-  .cart-item {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 0.6rem;
-  }
-  .cart-item button {
-    background: #dc3545;
-    border: none;
-    color: white;
-    padding: 0 6px;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-  /* Checkout */
-  #checkout {
+  form {
     max-width: 600px;
-    margin: 2rem auto;
+    margin: 1rem auto;
     background: white;
-    padding: 1rem 2rem 2rem 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 12px rgb(0 0 0 / 0.1);
-  }
-  #checkout h2 {
-    margin-top: 0;
-    text-align: center;
-  }
-  #checkout form {
-    display: flex;
-    flex-direction: column;
-  }
-  #checkout label {
-    margin-top: 1rem;
-    font-weight: bold;
-  }
-  #checkout input, #checkout textarea {
-    margin-top: 0.4rem;
-    padding: 0.5rem;
-    font-size: 1rem;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    resize: vertical;
-  }
-  #checkout textarea {
-    min-height: 60px;
-  }
-  #checkout button {
-    margin-top: 1.5rem;
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 0.8rem;
-    font-size: 1.1rem;
-    font-weight: bold;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-  }
-  #checkout button:hover {
-    background: #0056b3;
-  }
-  #order-summary {
-    margin-top: 1rem;
-    background: #f1f1f1;
     padding: 1rem;
     border-radius: 6px;
-    font-size: 0.9rem;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
   }
-  #order-summary strong {
+  label {
     display: block;
-    margin-top: 0.5rem;
+    margin-top: 0.8rem;
   }
-  #confirmation-message {
-    max-width: 600px;
-    margin: 2rem auto;
-    background: #d4edda;
-    border: 1px solid #c3e6cb;
-    color: #155724;
-    padding: 1rem 2rem;
-    border-radius: 8px;
+  input, textarea {
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.3rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    margin-top: 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #qr-code {
+    display: block;
+    margin: 1rem auto;
+    max-width: 250px;
+  }
+  #payment-instructions {
     text-align: center;
-    display: none;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    color: #333;
   }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>Arpeca Store</h1>
-  <div class="info">
-    Morada: Rua Exemplo 123, Lisboa | Contacto: 912 137 390 | Email: guilhermemartinsalmeida14@gmail.com
-  </div>
-</header>
+<h1>Finalizar Compra - Arpeca Store</h1>
 
-<nav>
-  <button class="nav-btn active" data-cat="all">Todos</button>
-  <button class="nav-btn" data-cat="eletronica">Eletrónica</button>
-  <button class="nav-btn" data-cat="roupa">Roupa</button>
-  <button class="nav-btn" data-cat="outros">Outros</button>
-  <button class="nav-btn" data-cat="checkout">Checkout</button>
-</nav>
-
-<div class="container">
-  <div class="products" id="product-list"></div>
-  
-  <div id="checkout" style="display:none;">
-    <h2>Finalizar Compra</h2>
-    <form id="checkout-form" action="https://formspree.io/f/meogbkld" method="POST">
-      <label for="nome">Nome Completo:</label>
-      <input type="text" id="nome" name="Nome" required />
-
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="_replyto" required />
-
-      <label for="telefone">Telefone:</label>
-      <input type="tel" id="telefone" name="Telefone" required />
-
-      <label for="morada">Morada:</label>
-      <textarea id="morada" name="Morada" required></textarea>
-
-      <label>Resumo da Encomenda:</label>
-      <div id="order-summary"></div>
-
-      <!-- Campo escondido para enviar dados JSON do carrinho -->
-      <input type="hidden" name="Encomenda" id="hidden-order" />
-
-      <button type="submit">Enviar Encomenda</button>
-    </form>
-  </div>
+<div id="order-summary">
+  <h2>Resumo da Encomenda</h2>
+  <ul id="order-list"></ul>
+  <p><strong>Total: €<span id="order-total">0.00</span></strong></p>
 </div>
 
-<button id="cart-toggle">Carrinho (0)</button>
-
-<div id="cart">
-  <h2>Carrinho</h2>
-  <div id="cart-items"></div>
-  <div><strong>Total: €<span id="cart-total">0.00</span></strong></div>
+<div id="payment-section">
+  <h2>Pagamento MB WAY</h2>
+  <img id="qr-code" src="" alt="QR Code MB WAY" />
+  <p id="payment-instructions">
+    Por favor, faça o pagamento para o MB WAY com o número <strong>912137390</strong> usando o QR code acima.<br>
+    Depois envie o comprovativo para o WhatsApp: <strong>912137390</strong>.
+  </p>
 </div>
 
-<div id="confirmation-message">
-  Obrigado pela sua encomenda! Entraremos em contacto em breve.
-</div>
+<form id="order-form" action="https://formspree.io/f/yourFormID" method="POST">
+  <h2>Dados do Cliente</h2>
+  <label for="nome">Nome completo:</label>
+  <input type="text" id="nome" name="nome" required>
+
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="_replyto" required>
+
+  <label for="telefone">Telefone:</label>
+  <input type="tel" id="telefone" name="telefone" required>
+
+  <label for="morada">Morada de envio:</label>
+  <textarea id="morada" name="morada" rows="3" required></textarea>
+
+  <input type="hidden" id="order-details" name="order-details" value="">
+
+  <button type="submit">Enviar Encomenda</button>
+</form>
 
 <script>
-  const products = [
-    { id: 1, nome: "Telemóvel Usado", preco: 80, categoria: "eletronica", imagem: "https://picsum.photos/id/180/300/200" },
-    { id: 2, nome: "Camisola Vermelha", preco: 15, categoria: "roupa", imagem: "https://picsum.photos/id/21/300/200" },
-    { id: 3, nome: "Teclado Antigo", preco: 25, categoria: "eletronica", imagem: "https://picsum.photos/id/30/300/200" },
-    { id: 4, nome: "Livro de Romance", preco: 5, categoria: "outros", imagem: "https://picsum.photos/id/10/300/200" },
-    { id: 5, nome: "Casaco de Inverno", preco: 40, categoria: "roupa", imagem: "https://picsum.photos/id/40/300/200" },
-    { id: 6, nome: "Rádio Vintage", preco: 60, categoria: "eletronica", imagem: "https://picsum.photos/id/50/300/200" },
-    { id: 7, nome: "Relógio de Pulso", preco: 20, categoria: "outros", imagem: "https://picsum.photos/id/60/300/200" },
-    { id: 8, nome: "Calças Jeans", preco: 18, categoria: "roupa", imagem: "https://picsum.photos/id/70/300/200" }
-  ];
+  // Carregar carrinho do localStorage
+  const cart = JSON.parse(localStorage.getItem('meuCarrinho')) || [];
 
-  let filteredCategory = "all";
-  let cart = [];
+  const orderListEl = document.getElementById('order-list');
+  const orderTotalEl = document.getElementById('order-total');
+  const orderDetailsInput = document.getElementById('order-details');
+  const qrCodeImg = document.getElementById('qr-code');
+  const paymentInstructions = document.getElementById('payment-instructions');
 
-  const productListEl = document.getElementById("product-list");
-  const filterButtons = document.querySelectorAll(".nav-btn");
-  const cartToggleBtn = document.getElementById("cart-toggle");
-  const cartEl = document.getElementById("cart");
-  const cartItemsEl = document.getElementById("cart-items");
-  const cartTotalEl = document.getElementById("cart-total");
-  const checkoutSection = document.getElementById("checkout");
-  const orderSummaryEl = document.getElementById("order-summary");
-  const hiddenOrderInput = document.getElementById("hidden-order");
-  const confirmationMessage = document.getElementById("confirmation-message");
+  let total = 0;
+  let orderDetails = '';
 
-  // Salvar e carregar carrinho do localStorage
-  function saveCart() {
-    localStorage.setItem('meuCarrinho', JSON.stringify(cart));
-  }
-  function loadCart() {
-    const saved = localStorage.getItem('meuCarrinho');
-    if (saved) {
-      cart = JSON.parse(saved);
-    }
-  }
+  cart.forEach(item => {
+    const li = document.createElement('li');
+    li.textContent = `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}`;
+    orderListEl.appendChild(li);
+    total += item.preco * item.quantidade;
 
-  function renderProducts() {
-    productListEl.innerHTML = "";
-    let filteredProducts = filteredCategory === "all" ? products : products.filter(p => p.categoria === filteredCategory);
-
-    filteredProducts.forEach(p => {
-      const card = document.createElement("div");
-      card.className = "product-card";
-
-      card.innerHTML = `
-        <img src="${p.imagem}" alt="${p.nome}">
-        <div class="product-info">
-          <h3>${p.nome}</h3>
-          <p class="price">€${p.preco.toFixed(2)}</p>
-        </div>
-        <button class="buy-btn" data-id="${p.id}">Comprar</button>
-      `;
-
-      productListEl.appendChild(card);
-    });
-
-    // Adiciona evento aos botões comprar
-    document.querySelectorAll(".buy-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = parseInt(btn.getAttribute("data-id"));
-        addToCart(id);
-      });
-    });
-  }
-
-  function addToCart(id) {
-    const produto = products.find(p => p.id === id);
-    const item = cart.find(c => c.id === id);
-
-    if (item) {
-      item.quantidade++;
-    } else {
-      cart.push({...produto, quantidade: 1});
-    }
-    updateCart();
-  }
-
-  function updateCart() {
-    cartItemsEl.innerHTML = "";
-    let total = 0;
-    cart.forEach(item => {
-      total += item.preco * item.quantidade;
-      const div = document.createElement("div");
-      div.className = "cart-item";
-      div.innerHTML = `
-        ${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}
-        <button data-id="${item.id}">x</button>
-      `;
-      cartItemsEl.appendChild(div);
-    });
-    cartTotalEl.textContent = total.toFixed(2);
-    cartToggleBtn.textContent = `Carrinho (${cart.length})`;
-
-    // Remove item do carrinho
-    cartItemsEl.querySelectorAll("button").forEach(btn => {
-      btn.addEventListener("click", () => {
-        const id = parseInt(btn.getAttribute("data-id"));
-        cart = cart.filter(item => item.id !== id);
-        updateCart();
-      });
-    });
-
-    saveCart();
-  }
-
-  // Navegação categorias + checkout
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      const cat = btn.getAttribute("data-cat");
-      if (cat === "checkout") {
-        showCheckout();
-      } else {
-        filteredCategory = cat;
-        showProducts();
-      }
-    });
+    orderDetails += `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}\n`;
   });
 
-  function showProducts() {
-    checkoutSection.style.display = "none";
-    productListEl.style.display = "grid";
-    cartEl.style.display = "none";
-    cartToggleBtn.style.display = "block";
-    renderProducts();
-  }
+  orderTotalEl.textContent = total.toFixed(2);
+  orderDetailsInput.value = orderDetails;
 
-  function showCheckout() {
-    if(cart.length === 0) {
-      alert("O carrinho está vazio! Adicione produtos antes de finalizar a compra.");
-      // Volta para "Todos"
-      filterButtons.forEach(b => b.classList.remove("active"));
-      filterButtons[0].classList.add("active");
-      filteredCategory = "all";
-      showProducts();
-      return;
-    }
-    productListEl.style.display = "none";
-    checkoutSection.style.display = "block";
-    cartEl.style.display = "none";
-    cartToggleBtn.style.display = "none";
-    renderOrderSummary();
-  }
+  // Gerar QR code MB WAY via API
+  const mbwayNumber = "912137390";
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=MBWAY:${mbwayNumber}`;
 
-  function renderOrderSummary() {
-    if(cart.length === 0) {
-      orderSummaryEl.textContent = "Carrinho vazio.";
-      hiddenOrderInput.value = "";
-      return;
-    }
-    let summaryHtml = "";
-    let total = 0;
-    cart.forEach(item => {
-      summaryHtml += `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}<br>`;
-      total += item.preco * item.quantidade;
-    });
-    summaryHtml += `<strong>Total: €${total.toFixed(2)}</strong>`;
-    orderSummaryEl.innerHTML = summaryHtml;
+  qrCodeImg.src = qrUrl;
 
-    // Envia a encomenda como JSON para o campo oculto
-    hiddenOrderInput.value = JSON.stringify(cart);
-  }
-
-  cartToggleBtn.addEventListener("click", () => {
-    if(cartEl.style.display === "flex") {
-      cartEl.style.display = "none";
-    } else {
-      cartEl.style.display = "flex";
-    }
-  });
-
-  // Submit form para Formspree com feedback
-  const checkoutForm = document.getElementById("checkout-form");
-  checkoutForm.addEventListener("submit", (e) => {
-    e.preventDefault();
-    // Pode-se validar mais aqui se quiser
-    const formData = new FormData(checkoutForm);
-
-    fetch(checkoutForm.action, {
-      method: "POST",
-      body: formData,
-      headers: { 'Accept': 'application/json' }
-    }).then(response => {
-      if(response.ok) {
-        cart = [];
-        updateCart();
-        checkoutForm.reset();
-        checkoutSection.style.display = "none";
-        confirmationMessage.style.display = "block";
-        // Voltar para página inicial após 5 segundos
-        setTimeout(() => {
-          confirmationMessage.style.display = "none";
-          filterButtons.forEach(b => b.classList.remove("active"));
-          filterButtons[0].classList.add("active");
-          filteredCategory = "all";
-          showProducts();
-        }, 5000);
-      } else {
-        alert("Erro ao enviar a encomenda. Por favor, tente novamente.");
-      }
-    }).catch(() => {
-      alert("Erro ao enviar a encomenda. Por favor, tente novamente.");
-    });
-  });
-
-  // Inicialização
-  loadCart();
-  updateCart();
-  renderProducts();
 </script>
 
 </body>
