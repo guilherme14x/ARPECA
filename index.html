@@ -3,20 +3,32 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Loja Online de Artigos Usados</title>
+<title>Arpeca Store</title>
 <style>
   /* Reset e base */
   body {
     font-family: Arial, sans-serif;
     margin: 0;
-    padding: 60px 1rem 1rem; /* topo para header fixo */
+    padding: 0;
     background: #f5f5f5;
+  }
+
+  /* Cabeçalho topo com contacto */
+  .top-header {
+    background: #111;
+    color: white;
+    font-size: 0.85rem;
+    padding: 0.4rem 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
   }
 
   /* Header e menu fixo */
   header {
     position: fixed;
-    top: 0; left: 0; right: 0;
+    top: 28px; /* abaixo do top-header */
+    left: 0; right: 0;
     background: #222;
     box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
     z-index: 120;
@@ -35,8 +47,8 @@
   }
 
   .logo {
-    font-size: 1.4rem;
-    letter-spacing: 2px;
+    font-size: 1.6rem;
+    letter-spacing: 3px;
   }
 
   .nav-links {
@@ -85,12 +97,35 @@
   /* Container principal */
   .container {
     max-width: 1100px;
-    margin: 1rem auto;
+    margin: 110px auto 1rem; /* espaçamento para header e top-header */
     padding: 0 1rem;
+  }
+
+  /* Menu de categorias na página inicial */
+  .category-menu {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .category-btn {
+    background: #444;
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    font-size: 1.3rem;
+    cursor: pointer;
+    user-select: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  .category-btn:hover {
+    background: #28a745;
   }
 
   /* Produtos */
   .products {
+    margin-top: 2rem;
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
     gap: 1rem;
@@ -140,7 +175,7 @@
   /* Carrinho */
   #cart {
     position: fixed;
-    top: 60px;
+    top: 110px;
     right: 20px;
     background: white;
     border-radius: 8px;
@@ -173,16 +208,38 @@
     border-radius: 4px;
     cursor: pointer;
   }
+
+  /* Botão voltar à seleção de categorias */
+  #back-to-categories {
+    margin-top: 1rem;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  #back-to-categories:hover {
+    background: #0056b3;
+  }
+
 </style>
 </head>
 <body>
 
+<!-- Cabeçalho topo com contacto -->
+<div class="top-header">
+  <div>Morada: Rua Exemplo 123, Lisboa</div>
+  <div>Tel: +351 912 345 678</div>
+  <div>Email: contacto@arpecastore.pt</div>
+</div>
+
 <header>
   <nav class="navbar">
-    <div class="logo">Loja Online</div>
+    <div class="logo">Arpeca Store</div>
     <ul class="nav-links">
-      <li><button class="filter-btn active" data-cat="all">Todos</button></li>
-      <li><button class="filter-btn" data-cat="eletronica">Eletrónica</button></li>
+      <li><button class="filter-btn active" data-cat="eletronica">Eletrónica</button></li>
       <li><button class="filter-btn" data-cat="roupa">Roupa</button></li>
       <li><button class="filter-btn" data-cat="outros">Outros</button></li>
     </ul>
@@ -191,8 +248,17 @@
 </header>
 
 <div class="container">
-  <div class="products" id="product-list">
-    <!-- Produtos vão aparecer aqui -->
+  <!-- Menu principal de categorias -->
+  <div id="category-menu" class="category-menu">
+    <button class="category-btn" data-cat="eletronica">Eletrónica</button>
+    <button class="category-btn" data-cat="roupa">Roupa</button>
+    <button class="category-btn" data-cat="outros">Outros</button>
+  </div>
+
+  <!-- Produtos (inicialmente escondidos) -->
+  <div id="product-section" style="display:none;">
+    <button id="back-to-categories">← Voltar às Categorias</button>
+    <div class="products" id="product-list"></div>
   </div>
 </div>
 
@@ -224,11 +290,14 @@
     { id: 8, nome: "Calças Jeans", preco: 18, categoria: "roupa", imagem: "https://picsum.photos/id/70/300/200" }
   ];
 
-  let filteredCategory = "all";
+  let currentCategory = null;
   let cart = [];
 
+  const categoryMenuEl = document.getElementById("category-menu");
+  const productSectionEl = document.getElementById("product-section");
   const productListEl = document.getElementById("product-list");
-  const filterButtons = document.querySelectorAll(".filter-btn");
+  const backToCategoriesBtn = document.getElementById("back-to-categories");
+
   const cartToggleBtn = document.getElementById("cart-toggle");
   const cartEl = document.getElementById("cart");
   const cartItemsEl = document.getElementById("cart-items");
@@ -246,9 +315,25 @@
     }
   }
 
-  function renderProducts() {
+  // Mostrar produtos da categoria selecionada
+  function showProducts(cat) {
+    currentCategory = cat;
+    categoryMenuEl.style.display = "none";
+    productSectionEl.style.display = "block";
+
+    // Atualiza botões do menu fixo (barra topo)
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.classList.toggle("active", btn.getAttribute("data-cat") === cat);
+    });
+
+    // Filtra e mostra produtos
+    const filteredProducts = products.filter(p => p.categoria === cat);
     productListEl.innerHTML = "";
-    let filteredProducts = filteredCategory === "all" ? products : products.filter(p => p.categoria === filteredCategory);
+
+    if(filteredProducts.length === 0){
+      productListEl.innerHTML = "<p>Não há produtos nesta categoria.</p>";
+      return;
+    }
 
     filteredProducts.forEach(p => {
       const card = document.createElement("div");
@@ -274,6 +359,24 @@
       });
     });
   }
+
+  // Voltar ao menu categorias
+  backToCategoriesBtn.addEventListener("click", () => {
+    currentCategory = null;
+    productSectionEl.style.display = "none";
+    categoryMenuEl.style.display = "flex";
+
+    // Limpar seleção ativa no menu fixo
+    document.querySelectorAll(".filter-btn").forEach(btn => btn.classList.remove("active"));
+  });
+
+  // Menu fixo no header (barra topo) também filtra produtos
+  document.querySelectorAll(".filter-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const cat = btn.getAttribute("data-cat");
+      showProducts(cat);
+    });
+  });
 
   function addToCart(id) {
     const produto = products.find(p => p.id === id);
@@ -315,16 +418,6 @@
     saveCart();
   }
 
-  // Filtros
-  filterButtons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      filterButtons.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      filteredCategory = btn.getAttribute("data-cat");
-      renderProducts();
-    });
-  });
-
   // Mostrar / esconder carrinho
   cartToggleBtn.addEventListener("click", () => {
     if(cartEl.style.display === "flex") {
@@ -339,14 +432,15 @@
     if(cart.length === 0) {
       alert('O carrinho está vazio!');
     } else {
-      // Para já só mostra um alerta, podes depois criar página checkout.html ou integração
       alert('Funcionalidade de checkout ainda não está implementada.');
     }
   });
 
   // Iniciar
   loadCart();
-  renderProducts();
+  // Mostrar menu principal (categorias) no início
+  categoryMenuEl.style.display = "flex";
+  productSectionEl.style.display = "none";
   updateCart();
 
 </script>
