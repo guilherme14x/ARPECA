@@ -5,41 +5,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Checkout - Loja Online</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 2rem; background: #f0f0f0; }
-    h1 { text-align: center; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f7f9fc;
+      color: #333;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+      color: #222;
+    }
     .order-summary, form, .mbway-info {
       background: white;
-      padding: 1rem 2rem;
-      margin: 1rem auto;
-      max-width: 500px;
-      border-radius: 8px;
-      box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      border-radius: 10px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin-bottom: 20px;
     }
-    .order-summary ul { list-style: none; padding: 0; }
+    .order-summary ul {
+      list-style: none;
+      padding: 0;
+    }
     .order-summary li {
-      display: flex; justify-content: space-between; padding: 0.3rem 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    .order-summary li:last-child {
+      border-bottom: none;
     }
     form label {
       display: block;
-      margin: 0.7rem 0 0.3rem 0;
+      margin-top: 15px;
+      font-weight: 600;
+      color: #555;
     }
     form input, form textarea {
       width: 100%;
-      padding: 0.5rem;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
       box-sizing: border-box;
+      transition: border-color 0.3s;
+    }
+    form input:focus, form textarea:focus {
+      border-color: #28a745;
+      outline: none;
     }
     button {
-      margin-top: 1rem;
-      padding: 0.7rem 1rem;
+      margin-top: 20px;
+      width: 100%;
+      padding: 15px;
       background: #28a745;
       color: white;
+      font-size: 1.2rem;
       border: none;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 5px;
-      font-weight: bold;
+      font-weight: 700;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background: #218838;
+    }
+    .mbway-info p, .mbway-info ul {
+      font-size: 1rem;
+      color: #444;
     }
     .mbway-info strong {
-      font-size: 1.1rem;
+      color: #1a1a1a;
+    }
+    #confirmation-message {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+      text-align: center;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -83,11 +133,15 @@
   <button type="submit">Confirmar Encomenda</button>
 </form>
 
+<div id="confirmation-message">Obrigado pela encomenda! Receberás um email de confirmação em breve.</div>
+
 <script>
   const cart = JSON.parse(localStorage.getItem('meuCarrinho')) || [];
   const orderListEl = document.getElementById('order-list');
   const orderTotalEl = document.getElementById('order-total');
   const carrinhoDataInput = document.getElementById('carrinho-data');
+  const confirmationMessage = document.getElementById('confirmation-message');
+  const form = document.getElementById('checkout-form');
 
   let total = 0;
   if (cart.length === 0) {
@@ -106,17 +160,34 @@
   }
   orderTotalEl.textContent = total.toFixed(2);
 
-  // Preenche o campo oculto com os dados do carrinho (formato texto simples)
-  const carrinhoResumo = cart.map(item => `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}`).join('\n');
-  carrinhoDataInput.value = `Produtos:\n${carrinhoResumo}\nTotal: €${total.toFixed(2)}`;
+  carrinhoDataInput.value = cart.map(item => `${item.nome} x${item.quantidade} - €${(item.preco * item.quantidade).toFixed(2)}`).join('\n') + `\nTotal: €${total.toFixed(2)}`;
 
-  // Limpar carrinho após envio
-  document.getElementById('checkout-form').addEventListener('submit', e => {
-    // Podemos deixar o Formspree enviar o formulário
-    alert('Obrigado pela encomenda! Receberás um email de confirmação em breve.');
-    localStorage.removeItem('meuCarrinho');
+  form.addEventListener('submit', e => {
+    // Mostrar mensagem de confirmação e limpar carrinho após submissão
+    e.preventDefault();
+
+    fetch(form.action, {
+      method: 'POST',
+      body: new FormData(form),
+      headers: {
+        'Accept': 'application/json'
+      }
+    }).then(response => {
+      if (response.ok) {
+        confirmationMessage.style.display = 'block';
+        form.style.display = 'none';
+        localStorage.removeItem('meuCarrinho');
+        orderListEl.innerHTML = '<li>Carrinho vazio.</li>';
+        orderTotalEl.textContent = '0.00';
+      } else {
+        alert('Ocorreu um erro ao enviar. Por favor, tenta novamente.');
+      }
+    }).catch(() => {
+      alert('Ocorreu um erro ao enviar. Por favor, tenta novamente.');
+    });
   });
 </script>
 
 </body>
 </html>
+
