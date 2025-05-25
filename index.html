@@ -5,38 +5,91 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Loja Online de Artigos Usados</title>
 <style>
+  /* Reset e base */
   body {
     font-family: Arial, sans-serif;
-    margin: 0; padding: 0; background: #f5f5f5;
+    margin: 0;
+    padding: 60px 1rem 1rem; /* topo para header fixo */
+    background: #f5f5f5;
   }
+
+  /* Header e menu fixo */
   header {
-    background: #333;
-    color: white;
-    padding: 1rem;
-    text-align: center;
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    background: #222;
+    box-shadow: 0 2px 8px rgb(0 0 0 / 0.3);
+    z-index: 120;
   }
+
+  .navbar {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.8rem 1rem;
+    color: white;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  .logo {
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .nav-links li {
+    margin: 0;
+  }
+
+  .nav-links button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 0.8rem;
+    border-radius: 4px;
+    transition: background-color 0.3s ease;
+    font-weight: 600;
+  }
+
+  .nav-links button:hover,
+  .nav-links button.active {
+    background-color: #444;
+  }
+
+  .cart-btn {
+    background: #28a745;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+
+  .cart-btn:hover {
+    background: #218838;
+  }
+
+  /* Container principal */
   .container {
     max-width: 1100px;
     margin: 1rem auto;
     padding: 0 1rem;
   }
-  .filters {
-    margin-bottom: 1rem;
-    text-align: center;
-  }
-  .filters button {
-    margin: 0 0.5rem;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    border: none;
-    background: #333;
-    color: white;
-    border-radius: 4px;
-    transition: background 0.3s;
-  }
-  .filters button:hover, .filters button.active {
-    background: #555;
-  }
+
+  /* Produtos */
   .products {
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(220px,1fr));
@@ -65,10 +118,6 @@
     margin: 0 0 0.5rem 0;
     font-size: 1.1rem;
   }
-  .product-info p {
-    margin: 0 0 1rem 0;
-    color: #555;
-  }
   .price {
     font-weight: bold;
     color: #2c7;
@@ -87,6 +136,7 @@
   button.buy-btn:hover {
     background: #218838;
   }
+
   /* Carrinho */
   #cart {
     position: fixed;
@@ -101,13 +151,14 @@
     padding: 1rem;
     display: none;
     flex-direction: column;
-    z-index: 100;
+    z-index: 150;
   }
   #cart h2 {
     margin-top: 0;
   }
   #cart-items {
     flex-grow: 1;
+    margin-bottom: 0.8rem;
   }
   .cart-item {
     display: flex;
@@ -122,48 +173,43 @@
     border-radius: 4px;
     cursor: pointer;
   }
-  #cart-toggle {
-    position: fixed;
-    top: 10px;
-    right: 20px;
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 0.8rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    z-index: 110;
-    font-weight: bold;
-  }
 </style>
 </head>
 <body>
 
 <header>
-  <h1>Loja Online - Artigos Usados</h1>
+  <nav class="navbar">
+    <div class="logo">Loja Online</div>
+    <ul class="nav-links">
+      <li><button class="filter-btn active" data-cat="all">Todos</button></li>
+      <li><button class="filter-btn" data-cat="eletronica">Eletrónica</button></li>
+      <li><button class="filter-btn" data-cat="roupa">Roupa</button></li>
+      <li><button class="filter-btn" data-cat="outros">Outros</button></li>
+    </ul>
+    <button id="cart-toggle" class="cart-btn">Carrinho (0)</button>
+  </nav>
 </header>
 
 <div class="container">
-
-  <div class="filters">
-    <button class="filter-btn active" data-cat="all">Todos</button>
-    <button class="filter-btn" data-cat="eletronica">Eletrónica</button>
-    <button class="filter-btn" data-cat="roupa">Roupa</button>
-    <button class="filter-btn" data-cat="outros">Outros</button>
-  </div>
-
   <div class="products" id="product-list">
     <!-- Produtos vão aparecer aqui -->
   </div>
-
 </div>
-
-<button id="cart-toggle">Carrinho (0)</button>
 
 <div id="cart">
   <h2>Carrinho</h2>
   <div id="cart-items"></div>
   <div><strong>Total: €<span id="cart-total">0.00</span></strong></div>
+  <button id="checkout-btn" style="
+    margin-top: 10px; 
+    background: #007bff; 
+    color: white; 
+    border: none; 
+    padding: 0.5rem; 
+    border-radius: 4px; 
+    cursor: pointer;
+    font-weight: bold;
+  ">Finalizar Compra</button>
 </div>
 
 <script>
@@ -187,6 +233,7 @@
   const cartEl = document.getElementById("cart");
   const cartItemsEl = document.getElementById("cart-items");
   const cartTotalEl = document.getElementById("cart-total");
+  const checkoutBtn = document.getElementById("checkout-btn");
 
   // Salvar e carregar carrinho do localStorage
   function saveCart() {
@@ -288,22 +335,12 @@
   });
 
   // Botão finalizar compra
-  const checkoutBtn = document.createElement('button');
-  checkoutBtn.textContent = "Finalizar Compra";
-  checkoutBtn.style.marginTop = "10px";
-  checkoutBtn.style.background = "#007bff";
-  checkoutBtn.style.color = "white";
-  checkoutBtn.style.border = "none";
-  checkoutBtn.style.padding = "0.5rem";
-  checkoutBtn.style.borderRadius = "4px";
-  checkoutBtn.style.cursor = "pointer";
-  cartEl.appendChild(checkoutBtn);
-
   checkoutBtn.addEventListener('click', () => {
     if(cart.length === 0) {
       alert('O carrinho está vazio!');
     } else {
-      window.location.href = 'checkout.html';
+      // Para já só mostra um alerta, podes depois criar página checkout.html ou integração
+      alert('Funcionalidade de checkout ainda não está implementada.');
     }
   });
 
